@@ -2,6 +2,7 @@
 # __*__ coding: utf-8 __*__
 import csv
 import requests
+import expanddouban
 from bs4 import BeautifulSoup
 
 url_prefix = "https://movie.douban.com/tag/#/?sort=S&range=9,10&tags=电影,"
@@ -17,23 +18,18 @@ class Movie:
 
 def getMovieUrl(category, location):
     """
-    return a string corresponding to the URL of douban movie lists given category and location. 
+    return a string corresponding to the URL of douban movie lists given category and location.
     """
     url = url_prefix + category + "," + location
 
     return url
 
-def getHtml(url):   
-    # response = requests.get(url)
-    # return response.text
-    with open('test.html') as f:
-        html_doc = f.read()
-        
-    return html_doc
+def getHtml(url):
+    return expanddouban.getHtml(url, loadmore=True)
 
 def getMovies(category, location):
     """
-    return a list of Movie objects with the given category and location. 
+    return a list of Movie objects with the given category and location.
     """
     url = getMovieUrl(category, location)
     html_doc = getHtml(url)
@@ -51,7 +47,26 @@ def getMovies(category, location):
 
     return movies
 
-def writeToCSV(movies):
+def writeToCSV():
+    movies = []
+
+    # get categories and locations list
+    html_doc = expanddouban.getHtml(url_prefix, loadmore=False)
+    soup = BeautifulSoup(html_doc, 'html.parser')
+    items = soup.find_all('ul', 'category')
+    categories_html = list(items[1].children)
+    locations_html = list(items[2].children)
+    categories = [x.find('span').string for x in categories_html]
+    locations = [x.find('span').string for x in locations_html]
+    # remove *All*
+    categories.pop(0)
+    locations.pop(0)
+
+    for c in categories:
+        for l in locations:
+            movies += getMovies(c, l)
+    # movies = getMovies('剧情', '美国')
+
     with open('movies.csv', 'w', encoding='utf-8') as csvfile:
         movies_writer = csv.writer(csvfile, delimiter=',', quotechar='|', quoting=csv.QUOTE_MINIMAL)
         for m in movies:
@@ -93,8 +108,8 @@ def caculate():
 
 if __name__ == '__main__':
     # movies = getMovies('剧情', '美国')
-    # writeToCSV(movies)
-    caculate()
+    writeToCSV()
+    # caculate()
 
 
 
