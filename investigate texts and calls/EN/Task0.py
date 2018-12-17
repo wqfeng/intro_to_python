@@ -32,16 +32,7 @@ Print messages:
 first_record_of_texts = texts[0]
 last_record_of_calls = calls[-1]
 
-print("First record of texts, {} texts {} at time {}".format(
-    first_record_of_texts[0],
-    first_record_of_texts[1],
-    first_record_of_texts[2]
-))
+print("First record of texts, {} texts {} at time {}".format(*texts[0]))
 
-print("Last record of calls, {} calls {} at time {}, lasting {} seconds".format(
-    last_record_of_calls[0],
-    last_record_of_calls[1],
-    last_record_of_calls[2],
-    last_record_of_calls[3]
-))
+print("Last record of calls, {} calls {} at time {}, lasting {} seconds".format(*calls[-1]))
 
