@@ -35,20 +35,12 @@ dictionary. If the key is already in the dictionary, add the value to
 the key's existing value. If the key does not already appear in the
 dictionary, add it and set its value to be the given value.
 """
-def add_value(phone_dict, key, value):
-    if key in phone_dict:
-        phone_dict[key] += value
-    else:
-        phone_dict[key] = value
-
 phone_dict = {}
 for x in calls:
-    add_value(phone_dict, x[0], int(x[3]))
-    add_value(phone_dict, x[1], int(x[3]))
+    phone_dict[x[0]] = phone_dict.get(x[0], 0) + int(x[3])
+    phone_dict[x[1]] = phone_dict.get(x[1], 0) + int(x[3])
 
-phone_of_longest_call = max(phone_dict, key=phone_dict.get)
+time, number = max(zip(phone_dict.values(), phone_dict.keys()))
 
-print("{} spent the longest time, {} seconds, on the phone during September 2016.".format(
-    phone_of_longest_call, phone_dict[phone_of_longest_call]
-))
+print("{} spent the longest time, {} seconds, on the phone during September 2016.".format(number, time))
 
